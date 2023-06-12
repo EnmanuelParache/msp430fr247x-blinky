@@ -1,12 +1,12 @@
 MEMORY
 {
-  /* These values are correct for the msp430g2553 device. You will need to
+  /* These values are correct for the msp430fr2476 device. You will need to
      modify these values if using a different device. Room must be reserved
      for interrupt vectors plus reset vector and the end of the first 64kB
      of address space. */
-  RAM : ORIGIN = 0x0200, LENGTH = 0x0200
-  ROM : ORIGIN = 0xC000, LENGTH = 0x3FE0
-  VECTORS : ORIGIN = 0xFFE0, LENGTH = 0x20
+  RAM : ORIGIN = 0x2000, LENGTH = 0x1FFF
+  ROM : ORIGIN = 0x8000, LENGTH = 0xFFFF
+  VECTORS : ORIGIN = 0xFF80, LENGTH = 0x80
 }
 
 /* Stack begins at the end of RAM:

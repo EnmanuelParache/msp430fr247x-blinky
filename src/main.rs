@@ -3,7 +3,6 @@
 
 extern crate panic_msp430; // For now, we only have an infinitely-looping panic handler.
 
-use msp430::asm;
 use msp430_rt::entry;
 
 #[allow(unused)]
@@ -14,12 +13,48 @@ use msp430fr2476;
 
 #[entry]
 fn main() -> ! {
-    asm::nop(); // If this isn't included, the empty infinite loop
-                // gets optimized out during compiling. Probably safe
-                // to remove in a "real" application.
+    let periph = msp430fr2476::Peripherals::take().unwrap();
 
+    let wd = periph.WDT_A;
+
+    // Write watchdog password and set hold bit
+    wd.wdtctl.write(unsafe {| w| w
+        .wdtpw().bits(0x5a)
+        .wdthold().set_bit()
+    });
+
+    // Another way to do the same would be
+    // wd.wdtctl
+    //     .modify(|r, w: &mut msp430fr2476::wdt_a::wdtctl::W| unsafe {
+    //         w.bits(((r.bits() & 0xFF) | 0x80) + 0x5a00)
+    //     });
+
+    let p1 = periph.P1;
+
+    // Set P1.0 as output
+    p1.p1dir.write(unsafe { |w| w.bits(1 << 0) });
+    p1.p1out.write(unsafe { |w| w.bits(1 << 0) });
+
+    // Set P1.0 function 0 P1SEL0 = 0 and P1SEL1 = 0
+    p1.p1sel0.write(unsafe { |w| w.bits(0) });
+    p1.p1sel1.write(unsafe { |w| w.bits(0) });
+
+    let pmm = periph.PMM;
+
+    // Unlock LPM5
+    pmm.pm5ctl0.write(|w| w.locklpm5().clear_bit());
+
+    let mut ctl: u32 = 0;
     loop {
-        // Application begins here.
+        if ctl >= 10000 {
+            ctl = 0;
+            // Clear P1.0
+            p1.p1out.write(unsafe { |w| w.bits(0 << 0) });
+        } else if ctl == 5000 {
+            // Set P1.0
+            p1.p1out.write(unsafe { |w| w.bits(1 << 0) });
+        }
+        ctl += 1;
     }
 }
 
