@@ -1,6 +1,6 @@
 # `msp430fr2476-blinky`
 
-This project was initialized using [msp430-quickstart](https://github.com/rust-embedded/msp430-quickstart) and can be run in LP-MSP430FR2476
+This project was initialized using [msp430-quickstart](https://github.com/rust-embedded/msp430-quickstart) and can be run in [LP-MSP430FR2476](https://www.ti.com/tool/LP-MSP430FR2476)
 ## Dependencies
 
 - [`mspdebug`](https://github.com/dlbeer/mspdebug)
