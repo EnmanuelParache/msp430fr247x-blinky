@@ -4,7 +4,8 @@ This project was initialized using [msp430-quickstart](https://github.com/rust-e
 ## Dependencies
 
 - [`mspdebug`](https://github.com/dlbeer/mspdebug)
-- [`msp430-gcc-opensource](https://www.ti.com/tool/MSP430-GCC-OPENSOURCE#downloads)
+- [`msp430-gcc-opensource`](https://www.ti.com/tool/MSP430-GCC-OPENSOURCE#downloads)
+- [`msp430 FET Drivers`](https://software-dl.ti.com/msp430/msp430_public_sw/mcu/msp430/MSP430_FET_Drivers/latest/index_FDS.html)
 - If using WSL [usbipd](https://github.com/dorssel/usbipd-win) allow you to connect USB with your linux subsystem
 
 ## Build the project
