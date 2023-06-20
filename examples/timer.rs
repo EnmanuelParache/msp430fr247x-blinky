@@ -4,7 +4,7 @@
 //! access to msp430 peripherals between a main thread and interrupt.
 //!
 //! As with [timer-unsafe] and [timer-oncecell], this example uses the `TIMER0_A1` interrupt to
-//! blink LEDs on the [MSP-EXP430G2](http://www.ti.com/tool/MSP-EXP430G2) development kit.
+//! blink LEDs on the [LP-MSP430FR2476](http://www.ti.com/tool/LP-MSP430FR2476) development kit.
 //!
 //! ---
 
@@ -48,7 +48,7 @@ fn init(cs: mspint::CriticalSection) {
     clock.csctl1.modify(unsafe {|_, w| w.bits(1 << 0 | 1 << 3 | 3 << 6)});
 
     let timer = &p.TA3;
-    timer.ta3ccr0.write(unsafe {|w| w.bits(1200)});
+    timer.ta3ccr0.write(unsafe {|w| w.bits(16000)});
     timer.ta3ctl.modify(|_, w| w.tassel().bits(1).mc().bits(1)); // tassel().tassel_1().mc().mc_1()
     timer.ta3cctl1.modify(|_, w| w.ccie().set_bit());
     timer.ta3ccr1.write(unsafe {|w| w.bits(600)});
