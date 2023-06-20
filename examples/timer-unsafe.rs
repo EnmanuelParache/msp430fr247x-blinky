@@ -7,7 +7,7 @@
 //! main thread and interrupt. All uses of [`steal()`] are commented to explain _why_ its usage
 //! is safe in that particular context.
 //!
-//! As with [timer] and [timer-oncecell], this example uses the `TIMER0_A1` interrupt to blink
+//! As with [timer] and [timer-oncecell], this example uses the `TIMER3_A1` interrupt to blink
 //! LEDs on the [LP-MSP430FR2476](http://www.ti.com/tool/LP-MSP430FR2476) development kit.
 //!
 //! [steal]: msp430fr2476::Peripherals::steal
@@ -66,7 +66,7 @@ fn main() -> ! {
 }
 
 #[interrupt]
-fn DefaultHandler(_cs: CriticalSection) {
+fn TIMER3_A1(_cs: CriticalSection) {
     // Safe because msp430 disables interrupts on handler entry. Therefore the handler
     // has full control/access to peripherals without data races.
     let p = unsafe { Peripherals::steal() };

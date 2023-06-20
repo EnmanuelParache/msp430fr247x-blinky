@@ -18,7 +18,7 @@
 //! [OnceCell][once]. [OnceCell][once] in general seems to have better space usage than
 //! [RefCell][ref] due to its invariants.
 //!
-//! As with [timer] and [timer-unsafe], this example uses the `TIMER0_A1` interrupt to
+//! As with [timer] and [timer-unsafe], this example uses the `TIMER3_A1` interrupt to
 //! blink LEDs on the [LP-MSP430FR2476](http://www.ti.com/tool/LP-MSP430FR2476) development kit.
 //!
 //! [once]: once_cell::unsync::OnceCell
@@ -83,7 +83,7 @@ fn main() -> ! {
 }
 
 #[interrupt]
-fn DefaultHandler(cs: CriticalSection) {
+fn TIMER3_A1(cs: CriticalSection) {
     let p = PERIPHERALS.borrow(cs).get().unwrap();
 
     let timer = &p.TA3;

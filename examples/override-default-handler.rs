@@ -23,7 +23,7 @@ use core::ptr;
 
 #[entry]
 fn main() -> ! {
-    loop { }
+    loop {}
 }
 
 static mut X: u16 = 0;

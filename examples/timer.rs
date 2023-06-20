@@ -3,7 +3,7 @@
 //! This example uses the [libcore](core)-provided [RefCell](core::cell::RefCell) to safely share
 //! access to msp430 peripherals between a main thread and interrupt.
 //!
-//! As with [timer-unsafe] and [timer-oncecell], this example uses the `TIMER0_A1` interrupt to
+//! As with [timer-unsafe] and [timer-oncecell], this example uses the `TIMER3_A1` interrupt to
 //! blink LEDs on the [LP-MSP430FR2476](http://www.ti.com/tool/LP-MSP430FR2476) development kit.
 //!
 //! ---
@@ -66,7 +66,7 @@ fn main() -> ! {
 }
 
 #[interrupt]
-fn DefaultHandler(cs: CriticalSection) {
+fn TIMER3_A1(cs: CriticalSection) {
     let p_ref = PERIPHERALS.borrow(cs).borrow();
     let p = p_ref.as_ref().unwrap();
 
