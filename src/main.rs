@@ -18,10 +18,8 @@ fn main() -> ! {
     let wd = periph.WDT_A;
 
     // Write watchdog password and set hold bit
-    wd.wdtctl.write(unsafe {| w| w
-        .wdtpw().bits(0x5a)
-        .wdthold().set_bit()
-    });
+    wd.wdtctl
+        .write(unsafe { |w| w.wdtpw().bits(0x5a).wdthold().set_bit() });
 
     // Another way to do the same would be
     // wd.wdtctl

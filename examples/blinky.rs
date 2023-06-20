@@ -36,10 +36,8 @@ fn main() -> ! {
     let wd = periph.WDT_A;
 
     // Write watchdog password and set hold bit
-    wd.wdtctl.write(unsafe {| w| w
-        .wdtpw().bits(0x5a)
-        .wdthold().set_bit()
-    });
+    wd.wdtctl
+        .write(unsafe { |w| w.wdtpw().bits(0x5a).wdthold().set_bit() });
 
     // wd.wdtctl
     //     .modify(|r, w: &mut msp430fr2476::wdt_a::wdtctl::W| unsafe {
