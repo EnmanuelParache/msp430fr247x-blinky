@@ -19,7 +19,7 @@
 //! [RefCell][ref] due to its invariants.
 //!
 //! As with [timer] and [timer-unsafe], this example uses the `TIMER0_A1` interrupt to
-//! blink LEDs on the [MSP-EXP430G2](http://www.ti.com/tool/MSP-EXP430G2) development kit.
+//! blink LEDs on the [LP-MSP430FR2476](http://www.ti.com/tool/LP-MSP430FR2476) development kit.
 //!
 //! [once]: once_cell::unsync::OnceCell
 //! [ref]: core::cell::RefCell
@@ -32,37 +32,43 @@
 
 extern crate panic_msp430;
 
-use msp430::{interrupt as mspint, critical_section as mspcs};
+use msp430::{critical_section as mspcs, interrupt as mspint};
 use msp430_rt::entry;
 use msp430fr2476::{interrupt, Peripherals};
 use once_cell::unsync::OnceCell;
 
-static PERIPHERALS : mspint::Mutex<OnceCell<Peripherals>> = mspint::Mutex::new(OnceCell::new());
+static PERIPHERALS: mspint::Mutex<OnceCell<Peripherals>> = mspint::Mutex::new(OnceCell::new());
 
 fn init(cs: mspint::CriticalSection) {
     let p = Peripherals::take().unwrap();
 
-    let wdt = &p.WATCHDOG_TIMER;
-    wdt.wdtctl
-        .write(|w| w.wdtpw().password().wdthold().set_bit());
+    let wdt = &p.WDT_A;
 
-    let port_1_2 = &p.PORT_1_2;
-    port_1_2
-        .p1dir
-        .modify(|_, w| w.p0().set_bit().p6().set_bit());
-    port_1_2
-        .p1out
-        .modify(|_, w| w.p0().set_bit().p6().clear_bit());
+    // Write watchdog password and set hold bit
+    wdt.wdtctl.write(unsafe {| w| w
+        .wdtpw().bits(0x5a)
+        .wdthold().set_bit()
+    });
 
-    let clock = &p.SYSTEM_CLOCK;
-    clock.bcsctl3.modify(|_, w| w.lfxt1s().lfxt1s_2());
-    clock.bcsctl1.modify(|_, w| w.diva().diva_1());
+   let p1 = &p.P1;
 
-    let timer = &p.TIMER0_A3;
-    timer.taccr0.write(|w| w.bits(1200));
-    timer.tactl.modify(|_, w| w.tassel().tassel_1().mc().mc_1());
-    timer.tacctl1.modify(|_, w| w.ccie().set_bit());
-    timer.taccr1.write(|w| w.bits(600));
+    // Set P1.0 as output
+    p1.p1dir.write(unsafe { |w| w.bits(1 << 0) });
+    p1.p1out.write(unsafe { |w| w.bits(1 << 0) });
+
+    // Set P1.0 function 0 P1SEL0 = 0 and P1SEL1 = 0
+    p1.p1sel0.write(unsafe { |w| w.bits(0) });
+    p1.p1sel1.write(unsafe { |w| w.bits(0) });
+
+    let clock = &p.CS;
+    clock.csctl3.modify(unsafe {|_, w| w.bits(1 << 5)});
+    clock.csctl1.modify(unsafe {|_, w| w.bits(1 << 0 | 1 << 3 | 3 << 6)});
+
+    let timer = &p.TA3;
+    timer.ta3ccr0.write(unsafe {|w| w.bits(16000)});
+    timer.ta3ctl.modify(|_, w| w.tassel().bits(1).mc().bits(1)); // tassel().tassel_1().mc().mc_1()
+    timer.ta3cctl1.modify(|_, w| w.ccie().set_bit());
+    timer.ta3ccr1.write(unsafe {|w| w.bits(600)});
 
     PERIPHERALS.borrow(cs).set(p).ok().unwrap();
 }
@@ -77,16 +83,17 @@ fn main() -> ! {
 }
 
 #[interrupt]
-fn TIMER0_A1(cs: CriticalSection) {
+fn DefaultHandler(cs: CriticalSection) {
     let p = PERIPHERALS.borrow(cs).get().unwrap();
 
-    let timer = &p.TIMER0_A3;
-    timer.tacctl1.modify(|_, w| w.ccifg().clear_bit());
+    let timer = &p.TA3;
+    timer.ta3cctl1.modify(|_, w| w.ccifg().clear_bit());
 
-    let port_1_2 = &p.PORT_1_2;
-    port_1_2
-        .p1out
-        .modify(|r, w| w.p0().bit(!r.p0().bit()).p6().bit(!r.p6().bit()));
+    let p1 = &p.P1;
+    
+    // toggle outputs
+    p1.p1out
+    .modify(|r, w| unsafe { w.bits(r.bits() ^ (1 << 0)) });
 }
 
 #[no_mangle]
