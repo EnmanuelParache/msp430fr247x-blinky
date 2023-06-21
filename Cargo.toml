@@ -28,12 +28,7 @@ fixed-macro = "1.1.1"
 
 [dev-dependencies.once_cell]
 version = "1.7.2"
-default_features = false
-
-[dev-dependencies.tcn75a]
-version = "0.2.0-alpha.1"
-git = "https://github.com/cr1901/i2c-server"
-branch = "embedded-hal-1.0"
+default-features = false
 
 [patch.crates-io.fixed-macro]
 git = "https://github.com/kvinwang/fixed-macro"
