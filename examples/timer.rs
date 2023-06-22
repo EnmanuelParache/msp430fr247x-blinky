@@ -53,6 +53,12 @@ fn init(cs: mspint::CriticalSection) {
     timer.ta3cctl1.modify(|_, w| w.ccie().set_bit());
     timer.ta3ccr1.write(unsafe { |w| w.bits(600) });
 
+    // Power Management Module
+    let pmm = &p.PMM;
+
+    // Unlock LPM5
+    pmm.pm5ctl0.write(|w| w.locklpm5().clear_bit());
+    
     *PERIPHERALS.borrow(cs).borrow_mut() = Some(p);
 }
 
