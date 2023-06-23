@@ -19,10 +19,9 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - run: su developer
     - name: Build
-      run: cargo build --verbose
+      run: su developer -c 'source ~/.bashrc && cargo build'
     - name: Build examples
-      run: cargo build --examples
+      run: su developer -c 'source ~/.bashrc && cargo build --examples'
 #     - name: Run tests
 #       run: cargo test --verbose
