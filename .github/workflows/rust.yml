@@ -14,7 +14,8 @@ jobs:
 
     runs-on: ubuntu-latest
     container:
-      image: enmanuelparache/msp430_rs_env:latest      
+      image: enmanuelparache/msp430_rs_env:latest    
+      options: --user root  
 
     steps:
     - uses: actions/checkout@v3
