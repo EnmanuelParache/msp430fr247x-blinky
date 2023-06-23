@@ -20,8 +20,8 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Build
-      run: su developer -c 'source ~/.bashrc && cargo build'
+      run: su developer -c 'sudo chown -R developer . && source ~/.bashrc && cargo build'
     - name: Build examples
-      run: su developer -c 'source ~/.bashrc && cargo build --examples'
+      run: su developer -c 'sudo chown -R developer . && source ~/.bashrc && cargo build --examples'
 #     - name: Run tests
 #       run: cargo test --verbose
