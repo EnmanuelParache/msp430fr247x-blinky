@@ -1,0 +1,6 @@
+services:
+  devenv:
+    image: "enmanuelparache/msp430_rs_env:latest"
+    container_name: 'msp430fr2476-blinky'
+    volumes:
+      - .:/home/developer/msp430fr2476-blinky
