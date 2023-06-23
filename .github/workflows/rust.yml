@@ -19,6 +19,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+    - run: su developer
     - name: Build
       run: cargo build --verbose
     - name: Build examples
