@@ -24,4 +24,4 @@ jobs:
     - name: Build examples
       run: su developer -c 'sudo chown -R developer . && source ~/.bashrc && cargo build --examples'
     - name: Run tests
-      run: su developer -c 'sudo chown -R developer . && source ~/.bashrc && cargo test'
+      run: su developer -c 'sudo chown -R developer . && source ~/.bashrc && cargo test --verbose'
