@@ -7,13 +7,13 @@ use msp430_rt::entry;
 
 #[allow(unused)]
 // Bring interrupt vectors into scope so the linker can see them; enabling the "rt"
-// feature of msp430fr2476 transitively enables the "device" feature of msp430-rt.
+// feature of msp430fr247x transitively enables the "device" feature of msp430-rt.
 // This prevents default interrupt vectors from being generated.
-use msp430fr2476;
+use msp430fr247x;
 
 #[entry]
 fn main() -> ! {
-    let periph = msp430fr2476::Peripherals::take().unwrap();
+    let periph = msp430fr247x::Peripherals::take().unwrap();
 
     let wd = periph.WDT_A;
 
@@ -23,7 +23,7 @@ fn main() -> ! {
 
     // Another way to do the same would be
     // wd.wdtctl
-    //     .modify(|r, w: &mut msp430fr2476::wdt_a::wdtctl::W| unsafe {
+    //     .modify(|r, w: &mut msp430fr247x::wdt_a::wdtctl::W| unsafe {
     //         w.bits(((r.bits() & 0xFF) | 0x80) + 0x5a00)
     //     });
 

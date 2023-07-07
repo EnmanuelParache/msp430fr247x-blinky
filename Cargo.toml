@@ -13,9 +13,9 @@ panic-msp430 = "0.4.0"
 # Use an existing PAC to ensure examples and the crate itself compiles. If
 # targeting a different device, you may need to change the version of your
 # crate. Your PAC must be generated with svd2rust version v0.20.0 or later.
-[dependencies.msp430fr2476]
+[dependencies.msp430fr247x]
 # When developing for another target you can use a local crate with path
-# path = "../msp430fr2476"
+# path = "../msp430fr247x"
 version = "0.1.0"
 features = ["rt", "critical-section"]
 

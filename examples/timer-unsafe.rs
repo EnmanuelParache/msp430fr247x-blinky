@@ -10,7 +10,7 @@
 //! As with [timer] and [timer-oncecell], this example uses the `TIMER3_A1` interrupt to blink
 //! LEDs on the [LP-MSP430FR2476](http://www.ti.com/tool/LP-MSP430FR2476) development kit.
 //!
-//! [steal]: msp430fr2476::Peripherals::steal
+//! [steal]: msp430fr247x::Peripherals::steal
 //!
 //! ---
 
@@ -22,7 +22,7 @@ extern crate panic_msp430;
 
 use msp430::{critical_section as mspcs, interrupt as mspint};
 use msp430_rt::entry;
-use msp430fr2476::{interrupt, Peripherals};
+use msp430fr247x::{interrupt, Peripherals};
 
 fn init(_cs: mspint::CriticalSection) {
     let p = Peripherals::take().unwrap();

@@ -17,7 +17,7 @@
 extern crate panic_msp430;
 
 use msp430_rt::entry;
-use msp430fr2476::interrupt;
+use msp430fr247x::interrupt;
 
 use core::ptr;
 

@@ -31,7 +31,7 @@ fn delay(n: u16) {
 // P1.0 = green LED
 #[entry]
 fn main() -> ! {
-    let periph = msp430fr2476::Peripherals::take().unwrap();
+    let periph = msp430fr247x::Peripherals::take().unwrap();
 
     let wd = periph.WDT_A;
 
@@ -40,7 +40,7 @@ fn main() -> ! {
         .write(unsafe { |w| w.wdtpw().bits(0x5a).wdthold().set_bit() });
 
     // wd.wdtctl
-    //     .modify(|r, w: &mut msp430fr2476::wdt_a::wdtctl::W| unsafe {
+    //     .modify(|r, w: &mut msp430fr247x::wdt_a::wdtctl::W| unsafe {
     //         w.bits(((r.bits() & 0xFF) | 0x80) + 0x5a00)
     //     });
 

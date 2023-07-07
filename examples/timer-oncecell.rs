@@ -10,8 +10,8 @@
 //! panic if a second thread tries to change its value while the first thread is mutating the
 //! variable.
 //!
-//! The [Periperhals](msp430fr2476::Peripherals) type, and individual peripherals never need
-//! to be modified. Therefore, [Periperhals](msp430fr2476::Peripherals) (or a subset of the
+//! The [Periperhals](msp430fr247x::Peripherals) type, and individual peripherals never need
+//! to be modified. Therefore, [Periperhals](msp430fr247x::Peripherals) (or a subset of the
 //! Periperhals _moved_ to another `struct`, if
 //! [building](https://blog.japaric.io/brave-new-io/#freezing-the-clock-configuration)
 //! higher-level abstractions) are good candidates to [`Send`](core::marker::Send) to a
@@ -34,7 +34,7 @@ extern crate panic_msp430;
 
 use msp430::{critical_section as mspcs, interrupt as mspint};
 use msp430_rt::entry;
-use msp430fr2476::{interrupt, Peripherals};
+use msp430fr247x::{interrupt, Peripherals};
 use once_cell::unsync::OnceCell;
 
 static PERIPHERALS: mspint::Mutex<OnceCell<Peripherals>> = mspint::Mutex::new(OnceCell::new());
