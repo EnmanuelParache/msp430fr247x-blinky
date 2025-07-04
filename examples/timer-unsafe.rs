@@ -27,33 +27,35 @@ use msp430fr247x::{interrupt, Peripherals};
 fn init(_cs: mspint::CriticalSection) {
     let p = Peripherals::take().unwrap();
 
-    let wdt = &p.WDT_A;
+    let wdt = &p.wdt_a;
 
     // Write watchdog password and set hold bit
-    wdt.wdtctl
+    wdt.wdtctl()
         .write(unsafe { |w| w.wdtpw().bits(0x5a).wdthold().set_bit() });
 
-    let p1 = &p.P1;
+    let p1 = &p.p1;
 
     // Set P1.0 as output
-    p1.p1dir.write(unsafe { |w| w.bits(1 << 0) });
-    p1.p1out.write(unsafe { |w| w.bits(1 << 0) });
+    p1.p1dir().write(unsafe { |w| w.bits(1 << 0) });
+    p1.p1out().write(unsafe { |w| w.bits(1 << 0) });
 
     // Set P1.0 function 0 P1SEL0 = 0 and P1SEL1 = 0
-    p1.p1sel0.write(unsafe { |w| w.bits(0) });
-    p1.p1sel1.write(unsafe { |w| w.bits(0) });
+    p1.p1sel0().write(unsafe { |w| w.bits(0) });
+    p1.p1sel1().write(unsafe { |w| w.bits(0) });
 
-    let clock = &p.CS;
-    clock.csctl3.modify(unsafe { |_, w| w.bits(1 << 5) });
+    let clock = &p.cs;
+    clock.csctl3().modify(unsafe { |_, w| w.bits(1 << 5) });
     clock
-        .csctl1
+        .csctl1()
         .modify(unsafe { |_, w| w.bits(1 << 0 | 1 << 3 | 3 << 6) });
 
-    let timer = &p.TA3;
-    timer.ta3ccr0.write(unsafe { |w| w.bits(16000) });
-    timer.ta3ctl.modify(|_, w| w.tassel().bits(1).mc().bits(1)); // tassel().tassel_1().mc().mc_1()
-    timer.ta3cctl1.modify(|_, w| w.ccie().set_bit());
-    timer.ta3ccr1.write(unsafe { |w| w.bits(600) });
+    let timer = &p.ta3;
+    timer.ta3ccr0().write(unsafe { |w| w.bits(16000) });
+    timer
+        .ta3ctl()
+        .modify(unsafe { |_, w| w.tassel().bits(1).mc().bits(1) }); // tassel().tassel_1().mc().mc_1()
+    timer.ta3cctl1().modify(|_, w| w.ccie().set_bit());
+    timer.ta3ccr1().write(unsafe { |w| w.bits(600) });
 }
 
 #[entry(interrupt_enable(pre_interrupt = init))]
@@ -71,13 +73,13 @@ fn TIMER3_A1(_cs: CriticalSection) {
     // has full control/access to peripherals without data races.
     let p = unsafe { Peripherals::steal() };
 
-    let timer = &p.TA3;
-    timer.ta3cctl1.modify(|_, w| w.ccifg().clear_bit());
+    let timer = &p.ta3;
+    timer.ta3cctl1().modify(|_, w| w.ccifg().clear_bit());
 
-    let p1 = &p.P1;
+    let p1 = &p.p1;
 
     // toggle output
-    p1.p1out
+    p1.p1out()
         .modify(|r, w| unsafe { w.bits(r.bits() ^ (1 << 0)) });
 }
 

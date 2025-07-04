@@ -9,48 +9,48 @@ use msp430_rt::entry;
 // Bring interrupt vectors into scope so the linker can see them; enabling the "rt"
 // feature of msp430fr247x transitively enables the "device" feature of msp430-rt.
 // This prevents default interrupt vectors from being generated.
-use msp430fr247x;
+use msp430fr247x as _;
 
 #[entry]
 fn main() -> ! {
     let periph = msp430fr247x::Peripherals::take().unwrap();
 
-    let wd = periph.WDT_A;
+    let wd = periph.wdt_a;
 
     // Write watchdog password and set hold bit
-    wd.wdtctl
+    wd.wdtctl()
         .write(unsafe { |w| w.wdtpw().bits(0x5a).wdthold().set_bit() });
 
     // Another way to do the same would be
     // wd.wdtctl
-    //     .modify(|r, w: &mut msp430fr247x::wdt_a::wdtctl::W| unsafe {
+    //     ().modify(|r, w: &mut msp430fr247x::wdt_a::wdtctl::W| unsafe {
     //         w.bits(((r.bits() & 0xFF) | 0x80) + 0x5a00)
     //     });
 
-    let p1 = periph.P1;
+    let p1 = periph.p1;
 
     // Set P1.0 as output
-    p1.p1dir.write(unsafe { |w| w.bits(1 << 0) });
-    p1.p1out.write(unsafe { |w| w.bits(1 << 0) });
+    p1.p1dir().write(unsafe { |w| w.bits(1 << 0) });
+    p1.p1out().write(unsafe { |w| w.bits(1 << 0) });
 
     // Set P1.0 function 0 P1SEL0 = 0 and P1SEL1 = 0
-    p1.p1sel0.write(unsafe { |w| w.bits(0) });
-    p1.p1sel1.write(unsafe { |w| w.bits(0) });
+    p1.p1sel0().write(unsafe { |w| w.bits(0) });
+    p1.p1sel1().write(unsafe { |w| w.bits(0) });
 
-    let pmm = periph.PMM;
+    let pmm = periph.pmm;
 
     // Unlock LPM5
-    pmm.pm5ctl0.write(|w| w.locklpm5().clear_bit());
+    pmm.pm5ctl0().write(|w| w.locklpm5().clear_bit());
 
     let mut ctl: u32 = 0;
     loop {
         if ctl >= 10000 {
             ctl = 0;
             // Clear P1.0
-            p1.p1out.write(unsafe { |w| w.bits(0 << 0) });
+            p1.p1out().write(unsafe { |w| w.bits(0) });
         } else if ctl == 5000 {
             // Set P1.0
-            p1.p1out.write(unsafe { |w| w.bits(1 << 0) });
+            p1.p1out().write(unsafe { |w| w.bits(1 << 0) });
         }
         ctl += 1;
     }

@@ -31,7 +31,7 @@ static mut X: u16 = 0;
 #[interrupt]
 fn DefaultHandler() {
     unsafe {
-        ptr::write_volatile(&mut X, ptr::read_volatile(&X) + 1);
+        ptr::write_volatile(&raw mut X, ptr::read_volatile(&raw const X) + 1);
     }
 }
 

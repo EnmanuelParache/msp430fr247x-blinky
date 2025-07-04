@@ -25,29 +25,29 @@ static PERIPHERALS: mspint::Mutex<RefCell<Option<Peripherals>>> =
 fn init(cs: mspint::CriticalSection) {
     let p = Peripherals::take().unwrap();
 
-    let wdt = &p.WDT_A;
+    let wdt = &p.wdt_a;
 
     // Write watchdog password and set hold bit
-    wdt.wdtctl
+    wdt.wdtctl()
         .write(unsafe { |w| w.wdtpw().bits(0x5a).wdthold().set_bit() });
 
-    let p1 = &p.P1;
+    let p1 = &p.p1;
 
     // Set P1.0 as output
-    p1.p1dir.write(unsafe { |w| w.bits(1 << 0) });
-    p1.p1out.write(unsafe { |w| w.bits(1 << 0) });
+    p1.p1dir().write(unsafe { |w| w.bits(1 << 0) });
+    p1.p1out().write(unsafe { |w| w.bits(1 << 0) });
 
     // Set P1.0 function 0 P1SEL0 = 0 and P1SEL1 = 0
-    p1.p1sel0.write(unsafe { |w| w.bits(0) });
-    p1.p1sel1.write(unsafe { |w| w.bits(0) });
+    p1.p1sel0().write(unsafe { |w| w.bits(0) });
+    p1.p1sel1().write(unsafe { |w| w.bits(0) });
 
     // Tunrn LED1 (P1.0) ON
-    p1.p1out
+    p1.p1out()
         .modify(|r, w| unsafe { w.bits(r.bits() | (1 << 0)) });
 
-    let p4 = &p.P4;
+    let p4 = &p.p4;
 
-    p4.p4ifg.write( unsafe {|w| w.bits(0)});
+    p4.p4ifg().write(unsafe { |w| w.bits(0) });
 
     // PxDIR PxREN PxOUT I/O Configuration
     //     0     0     x Input
@@ -56,42 +56,56 @@ fn init(cs: mspint::CriticalSection) {
     //     1     x     x Output
 
     // Set P4.0 as input
-    p4.p4dir.modify(unsafe { |r, w| w.bits(r.bits() & !(1 << 0)) });
-    p4.p4ren.modify(unsafe { |r, w| w.bits(r.bits() | (1 << 0))});
-    p4.p4out.modify(unsafe { |r, w| w.bits(r.bits() | (1 << 0)) });
+    p4.p4dir()
+        .modify(unsafe { |r, w| w.bits(r.bits() & !(1 << 0)) });
+    p4.p4ren()
+        .modify(unsafe { |r, w| w.bits(r.bits() | (1 << 0)) });
+    p4.p4out()
+        .modify(unsafe { |r, w| w.bits(r.bits() | (1 << 0)) });
 
     // Set P4.0 function 0 P4SEL0 = 0 and P4SEL1 = 0
-    p4.p4sel0.modify(unsafe { |r, w| w.bits(r.bits() & !(1 << 0)) });
-    p4.p4sel1.modify(unsafe { |r, w| w.bits(r.bits() & !(1 << 0)) });
-    
+    p4.p4sel0()
+        .modify(unsafe { |r, w| w.bits(r.bits() & !(1 << 0)) });
+    p4.p4sel1()
+        .modify(unsafe { |r, w| w.bits(r.bits() & !(1 << 0)) });
+
     // Set low to high transition
-    p4.p4ies.modify(unsafe { |r,w| w.bits(r.bits() | (1 << 0))});
+    p4.p4ies()
+        .modify(unsafe { |r, w| w.bits(r.bits() | (1 << 0)) });
 
     // Enable interrupt for P4.0
-    p4.p4ie.modify(unsafe {|r, w| w.bits(r.bits() | (1 << 0))});
+    p4.p4ie()
+        .modify(unsafe { |r, w| w.bits(r.bits() | (1 << 0)) });
 
-    let p2 = &p.P2;
+    let p2 = &p.p2;
 
     // Set P2.3 as input
-    p2.p2dir.modify(unsafe { |r, w| w.bits(r.bits() & !(1 << 3)) });
-    p2.p2ren.modify(unsafe { |r, w| w.bits(r.bits() | (1 << 3)) });
-    p2.p2out.modify(unsafe { |r, w| w.bits(r.bits() | (1 << 3)) });
+    p2.p2dir()
+        .modify(unsafe { |r, w| w.bits(r.bits() & !(1 << 3)) });
+    p2.p2ren()
+        .modify(unsafe { |r, w| w.bits(r.bits() | (1 << 3)) });
+    p2.p2out()
+        .modify(unsafe { |r, w| w.bits(r.bits() | (1 << 3)) });
 
     // Set P2.3 function 0 P2SEL0 = 0 and P2SEL1 = 0
-    p2.p2sel0.modify(unsafe { |r, w| w.bits(r.bits() & !(1 << 3)) });
-    p2.p2sel1.modify(unsafe { |r, w| w.bits(r.bits() & !(1 << 3)) });
+    p2.p2sel0()
+        .modify(unsafe { |r, w| w.bits(r.bits() & !(1 << 3)) });
+    p2.p2sel1()
+        .modify(unsafe { |r, w| w.bits(r.bits() & !(1 << 3)) });
 
     // Set low to high transition
-    p2.p2ies.modify(unsafe { |r, w| w.bits(r.bits() | (1 << 3))});
+    p2.p2ies()
+        .modify(unsafe { |r, w| w.bits(r.bits() | (1 << 3)) });
 
     // Enable interrupt for P2.3
-    p2.p2ie.modify(unsafe {|r, w| w.bits(r.bits() | (1 << 3))});
+    p2.p2ie()
+        .modify(unsafe { |r, w| w.bits(r.bits() | (1 << 3)) });
 
     // Power Management Module
-    let pmm = &p.PMM;
+    let pmm = &p.pmm;
 
     // Unlock LPM5
-    pmm.pm5ctl0.write(|w| w.locklpm5().clear_bit());
+    pmm.pm5ctl0().write(|w| w.locklpm5().clear_bit());
 
     *PERIPHERALS.borrow(cs).borrow_mut() = Some(p);
 }
@@ -110,14 +124,14 @@ fn PORT4(cs: CriticalSection) {
     let p_ref = PERIPHERALS.borrow(cs).borrow();
     let p = p_ref.as_ref().unwrap();
 
-    let p4 = &p.P4;
+    let p4 = &p.p4;
 
-    p4.p4ifg.write( unsafe {|w| w.bits(0)});
+    p4.p4ifg().write(unsafe { |w| w.bits(0) });
 
-    let p1 = &p.P1;
+    let p1 = &p.p1;
 
     // toggle outputs
-    p1.p1out
+    p1.p1out()
         .modify(|r, w| unsafe { w.bits(r.bits() ^ (1 << 0)) });
 }
 
@@ -126,14 +140,14 @@ fn PORT2(cs: CriticalSection) {
     let p_ref = PERIPHERALS.borrow(cs).borrow();
     let p = p_ref.as_ref().unwrap();
 
-    let p2 = &p.P2;
+    let p2 = &p.p2;
 
-    p2.p2ifg.reset();
+    p2.p2ifg().reset();
 
-    let p1 = &p.P1;
+    let p1 = &p.p1;
 
     // toggle outputs
-    p1.p1out
+    p1.p1out()
         .modify(|r, w| unsafe { w.bits(r.bits() ^ (1 << 0)) });
 }
 

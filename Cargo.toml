@@ -3,7 +3,7 @@ authors = ["Enmanuel Parache <enmanuelparache@gmail.com>"]
 edition = "2018"
 readme = "README.md"
 name = "msp430fr2476-blinky"
-version = "0.1.0"
+version = "0.2.0"
 
 [dependencies]
 msp430 = { version = "0.4.0", features = ["critical-section-single-core"] }
@@ -16,7 +16,7 @@ panic-msp430 = "0.4.0"
 [dependencies.msp430fr247x]
 # When developing for another target you can use a local crate with path
 # path = "../msp430fr247x"
-version = "0.1.0"
+version = "0.2.0"
 features = ["rt", "critical-section"]
 
 
