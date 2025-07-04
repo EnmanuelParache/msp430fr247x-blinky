@@ -19,6 +19,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+    - name: Toolchain 
+      run: su developer -c 'sudo chown -R developer . && source ~/.bashrc && rustup component add rust-src --toolchain nightly-2025-06-25-x86_64-unknown-linux-gnu'
     - name: Build
       run: su developer -c 'sudo chown -R developer . && source ~/.bashrc && cargo +nightly-2025-06-25-x86_64-unknown-linux-gnu build'
     - name: Run lint
